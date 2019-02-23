@@ -5,6 +5,9 @@ pool:
   vmImage: 'windows-2019'
 
 steps:
-- powershell: |
-    tar --version
-  displayName: 'Do it'
+- script: |
+    where tar
+    where xz
+    where curl
+    where wget
+  displayName: 'Run script'
