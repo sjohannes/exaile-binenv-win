@@ -1,3 +1,7 @@
+variables:
+  url: https://downloads.sourceforge.net/project/msys2/Base/x86_64/msys2-base-x86_64-20180531.tar.xz
+  sha256: 4e799b5c3efcf9efcb84923656b7bcff16f75a666911abd6620ea8e5e1e9870c
+
 trigger:
 - master
 
@@ -6,8 +10,10 @@ pool:
 
 steps:
 - script: |
-    where tar
-    where xz
-    where curl
-    where wget
-  displayName: 'Run script'
+    curl -CfLo msys2.tar.xz $(url)
+    echo $(sha256) msys2.tar.xz| sha256sum -c || exit 1
+    tar xf msys2.tar.xz
+    msys64/usr/bin/bash.exe -lc exit
+    msys64/usr/bin/bash.exe -lc "pacman -Syuu --noconfirm"
+    msys64/usr/bin/bash.exe -lc "pacman -Suu --noconfirm"
+  displayName: 'Download and initialize MSYS2'
