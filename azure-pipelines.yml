@@ -12,6 +12,7 @@ steps:
 - script: |
     curl -Lf1 -Ss -C - -o msys2.tar.xz $(url) || exit 1
     echo $(sha256) msys2.tar.xz> checksum.txt || exit 2
+    cat checksum.txt
     dos2unix checksum.txt || exit 2
     sha256sum -c checksum.txt || exit 2
     tar xf msys2.tar.xz || exit 3
