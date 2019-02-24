@@ -1,6 +1,6 @@
 variables:
-  URL: https://downloads.sourceforge.net/project/msys2/Base/x86_64/msys2-base-x86_64-20180531.tar.xz
-  SHA256: 4e799b5c3efcf9efcb84923656b7bcff16f75a666911abd6620ea8e5e1e9870c
+  url: https://downloads.sourceforge.net/project/msys2/Base/x86_64/msys2-base-x86_64-20180531.tar.xz
+  sha256: 4e799b5c3efcf9efcb84923656b7bcff16f75a666911abd6620ea8e5e1e9870c
 
 trigger:
 - master
@@ -10,8 +10,8 @@ pool:
 
 steps:
 - powershell: |
-    Invoke-WebRequest $URL -OutFile msys2.tar.xz
-    if ((Get-FileHash msys2.tar.xz SHA256) -ine $SHA256) {
+    Invoke-WebRequest $(url) -OutFile msys2.tar.xz
+    if ((Get-FileHash msys2.tar.xz SHA256) -ine $(sha256)) {
       Write-Error "Hash mismatch"
       exit 1
     }
