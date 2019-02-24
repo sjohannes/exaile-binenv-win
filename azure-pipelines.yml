@@ -10,16 +10,16 @@ pool:
 
 steps:
 - powershell: |
-    function Start-NativeCommand ([scriptblock] Command) {
-      $eap = $script:ErrorActionPreference
-      $script:ErrorActionPreference = 'Continue'
+    function Start-NativeCommand ([scriptblock] $Command) {
+      $eap = $Script:ErrorActionPreference
+      $Script:ErrorActionPreference = 'Continue'
       try {
         & $command 2>&1
         if ($LASTEXITCODE -ne 0) {
           throw "Native command returns $LASTEXITCODE: $command"
         }
       } finally {
-        $script:ErrorActionPreference = $eap
+        $Script:ErrorActionPreference = $eap
       }
     }
     (New-Object System.Net.WebClient).DownloadFile($env:URL, (Join-Path (Get-Location) msys2.tar.xz))
