@@ -13,11 +13,8 @@ steps:
     function exec ([scriptblock] $block) {
       $eap = $Script:ErrorActionPreference
       $Script:ErrorActionPreference = 'Continue'
-      try {
-        & $block 2>&1
-      } finally {
-        $Script:ErrorActionPreference = $eap
-      }
+      & $block 2>&1 | % { "$_" }
+      $Script:ErrorActionPreference = $eap
     }
     (New-Object System.Net.WebClient).DownloadFile($env:URL, (Join-Path (Get-Location) msys2.tar.xz))
     $hash = Get-FileHash msys2.tar.xz -Algorithm SHA256
