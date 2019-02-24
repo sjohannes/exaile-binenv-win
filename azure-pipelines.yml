@@ -1,6 +1,11 @@
 variables:
   url: https://downloads.sourceforge.net/project/msys2/Base/x86_64/msys2-base-x86_64-20180531.tar.xz
   sha256: 4e799b5c3efcf9efcb84923656b7bcff16f75a666911abd6620ea8e5e1e9870c
+  packages: |
+    mingw-w64-i686-gtk3
+    mingw-w64-x86_64-gtk3
+    mingw-w64-i686-python2-gobject
+    mingw-w64-x86_64-python2-gobject
 
 trigger:
 - master
@@ -16,27 +21,7 @@ steps:
     tar xf msys2.tar.xz
     cmd //c 'msys64\usr\bin\bash.exe' -lc exit
     cmd //c 'msys64\usr\bin\bash.exe' -lc 'pacman -Syuu --noconfirm'
-    cmd //c 'msys64\usr\bin\bash.exe' -lc 'pacman -Suu --noconfirm'
-- powershell: |
-    exit 0
-    function exec ([scriptblock] $block) {
-      Write-Host ('> Running ' + "$block".Trim()) -ForegroundColor Blue
-      $eap = $Script:ErrorActionPreference
-      $Script:ErrorActionPreference = 'Continue'
-      & $block 2>&1 | % { "$_" }
-      if ($LASTEXITCODE -ne 0) {
-        throw "Exited with code $LASTEXITCODE"
-      }
-      $Script:ErrorActionPreference = $eap
-    }
-    Write-Host '> Downloading $env:URL'
-    (New-Object System.Net.WebClient).DownloadFile($env:URL, (Join-Path (Get-Location) msys2.tar.xz))
-    $hash = Get-FileHash msys2.tar.xz -Algorithm SHA256
-    if ($hash.Hash -ine $env:SHA256) {
-      throw "Hash mismatch for $(file msys2.tar.xz)"
-    }
-    exec { tar xf msys2.tar.xz }
-    exec { msys64\usr\bin\bash.exe -lc exit }
-    exec { msys64\usr\bin\bash.exe -lc 'pacman -Syuu --noconfirm' }
-    exec { msys64\usr\bin\bash.exe -lc 'pacman -Suu --noconfirm' }
-  displayName: 'Download and initialize MSYS2'
+    cmd //c 'msys64\usr\bin\bash.exe' -lc "pacman -Suu --noconfirm $PACKAGES"
+    time tar cf exaile-binenv-win32.tar.xz --strip-components=1 msys64/mingw32
+    time tar cf exaile-binenv-win64.tar.xz --strip-components=1 msys64/mingw64
+  displayName: 'Build Exaile binenv'
