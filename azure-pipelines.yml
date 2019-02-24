@@ -14,9 +14,9 @@ steps:
     curl -Lf -Ss -C - -o msys2.tar.xz $URL
     echo $SHA256 msys2.tar.xz | sha256sum -c
     tar xf msys2.tar.xz
-    cmd //c 'msys64\usr\bin\bash.exe -lc exit'
-    cmd //c 'msys64\usr\bin\bash.exe -lc "pacman -Syuu --noconfirm"'
-    cmd //c 'msys64\usr\bin\bash.exe -lc "pacman -Suu --noconfirm"'
+    cmd //c 'msys64\usr\bin\bash.exe' -lc exit
+    cmd //c 'msys64\usr\bin\bash.exe' -lc 'pacman -Syuu --noconfirm'
+    cmd //c 'msys64\usr\bin\bash.exe' -lc 'pacman -Suu --noconfirm'
 - powershell: |
     exit 0
     function exec ([scriptblock] $block) {
