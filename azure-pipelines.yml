@@ -1,6 +1,6 @@
 variables:
   url: https://downloads.sourceforge.net/project/msys2/Base/x86_64/msys2-base-x86_64-20180531.tar.xz
-  sha256: 4e799b5c3efcf9efcb84923656b7bcff16f75a666911abd6620ea8e5e1e9870c
+  sha256: 3e799b5c3efcf9efcb84923656b7bcff16f75a666911abd6620ea8e5e1e9870c
 
 trigger:
 - master
@@ -10,10 +10,14 @@ pool:
 
 steps:
 - powershell: |
+    Write-Error test
     function exec ([scriptblock] $block) {
       $eap = $Script:ErrorActionPreference
       $Script:ErrorActionPreference = 'Continue'
       & $block 2>&1 | % { "$_" }
+      if ($LASTEXITCODE -ne 0) {
+        throw "Exited with code ${LASTEXITCODE}: {$block}"
+      }
       $Script:ErrorActionPreference = $eap
     }
     (New-Object System.Net.WebClient).DownloadFile($env:URL, (Join-Path (Get-Location) msys2.tar.xz))
@@ -24,8 +28,8 @@ steps:
       Write-Output $hash
       exit 1
     }
-    & tar xf msys2.tar.xz
+    exec { & tar xf msys2.tar.xz }
     exec { & msys64\usr\bin\bash.exe -lc exit }
-    & msys64\usr\bin\bash.exe -lc 'pacman -Syuu --noconfirm'
-    & msys64\usr\bin\bash.exe -lc 'pacman -Suu --noconfirm'
+    exec { & msys64\usr\bin\bash.exe -lc 'pacman -Syuu --noconfirm' }
+    exec { & msys64\usr\bin\bash.exe -lc 'pacman -Suu --noconfirm' }
   displayName: 'Download and initialize MSYS2'
