@@ -40,7 +40,7 @@ steps:
     mkdir -p build/var/log
   displayName: 'Exaile binenv: prepare'
 - script: |
-    set PACMAN=msys64\usr\bin\bash.exe --root build --noconfirm
+    set PACMAN=msys64\usr\bin\bash.exe pacman --root build --noconfirm
     %PACMAN% -Su
     %PACMAN% -S base %PACKAGES%
     time tar cf exaile-binenv-win.tar.xz --strip-components=1 build
