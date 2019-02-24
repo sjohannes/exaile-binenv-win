@@ -10,7 +10,7 @@ pool:
 
 steps:
 - bash: |
-    curl -Lf1 -Ss -C - -o msys2.tar.xz $(url) || exit 1
+    curl -Lf -Ss -C - -o msys2.tar.xz $(url) || exit 1
     echo $(sha256) msys2.tar.xz | sha256sum -c || exit 2
     tar xf msys2.tar.xz || exit 3
     msys64/usr/bin/bash.exe -lc exit || exit 3
