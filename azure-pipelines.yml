@@ -2,10 +2,23 @@ variables:
   url: https://downloads.sourceforge.net/project/msys2/Base/x86_64/msys2-base-x86_64-20180531.tar.xz
   sha256: 4e799b5c3efcf9efcb84923656b7bcff16f75a666911abd6620ea8e5e1e9870c
   packages: >
-    mingw-w64-i686-gtk3
-    mingw-w64-x86_64-gtk3
+    mingw-w64-i686-nsis
     mingw-w64-i686-python2-gobject
-    mingw-w64-x86_64-python2-gobject
+    mingw-w64-i686-python2-cairo
+    mingw-w64-i686-python2-pip
+    mingw-w64-i686-gtk3
+    mingw-w64-i686-gdk-pixbuf2
+    mingw-w64-i686-gstreamer
+    mingw-w64-i686-gst-plugins-base
+    mingw-w64-i686-gst-plugins-good
+    mingw-w64-i686-gst-plugins-bad
+    mingw-w64-i686-gst-libav
+    mingw-w64-i686-gst-plugins-ugly
+    mingw-w64-i686-librsvg
+    make
+    git
+    tar
+    mingw-w64-i686-python2-bsddb3
 
 trigger:
 - master
@@ -22,6 +35,6 @@ steps:
     cmd //c 'msys64\usr\bin\bash.exe' -lc exit
     cmd //c 'msys64\usr\bin\bash.exe' -lc 'pacman -Syuu --noconfirm'
     cmd //c 'msys64\usr\bin\bash.exe' -lc "pacman -S --noconfirm $PACKAGES"
-    time tar cf exaile-binenv-win32.tar.xz --strip-components=1 msys64/mingw32
-    time tar cf exaile-binenv-win64.tar.xz --strip-components=1 msys64/mingw64
+    time tar cf exaile-binenv-win.tar.xz msys64
+    du -csh exaile-binenv-win.tar.xz
   displayName: 'Build Exaile binenv'
