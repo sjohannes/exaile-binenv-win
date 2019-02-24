@@ -9,12 +9,9 @@ pool:
   vmImage: 'windows-2019'
 
 steps:
-- script: |
+- bash: |
     curl -Lf1 -Ss -C - -o msys2.tar.xz $(url) || exit 1
-    echo $(sha256) msys2.tar.xz> checksum.txt || exit 2
-    cat checksum.txt
-    dos2unix checksum.txt || exit 2
-    sha256sum -c checksum.txt || exit 2
+    echo $(sha256) msys2.tar.xz | sha256sum -c || exit 2
     tar xf msys2.tar.xz || exit 3
     msys64/usr/bin/bash.exe -lc exit || exit 3
     msys64/usr/bin/bash.exe -lc "pacman -Syuu --noconfirm" || exit 3
