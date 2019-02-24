@@ -10,10 +10,15 @@ pool:
 
 steps:
 - bash: |
-    set -x
+    set -ex
     curl -Lf -Ss -C - -o m.tar.xz $URL
     echo $SHA256 m.tar.xz | sha256sum -c
+    tar xf msys2.tar.xz
+    msys64\usr\bin\bash.exe -lc exit
+    msys64\usr\bin\bash.exe -lc 'pacman -Syuu --noconfirm'
+    msys64\usr\bin\bash.exe -lc 'pacman -Suu --noconfirm'
 - powershell: |
+    exit 0
     function exec ([scriptblock] $block) {
       Write-Host ('> Running ' + "$block".Trim()) -ForegroundColor Blue
       $eap = $Script:ErrorActionPreference
