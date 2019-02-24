@@ -10,17 +10,11 @@ pool:
 
 steps:
 - powershell: |
-    function Start-NativeCommand ([scriptblock] $Command) {
+    function exec ([scriptblock] $block) {
       $eap = $Script:ErrorActionPreference
       $Script:ErrorActionPreference = 'Continue'
-      try {
-        & $command 2>&1
-        if ($LASTEXITCODE -ne 0) {
-          throw "Native command returns $LASTEXITCODE: $command"
-        }
-      } finally {
-        $Script:ErrorActionPreference = $eap
-      }
+      & $block 2>&1
+      $Script:ErrorActionPreference = $eap
     }
     (New-Object System.Net.WebClient).DownloadFile($env:URL, (Join-Path (Get-Location) msys2.tar.xz))
     $hash = Get-FileHash msys2.tar.xz -Algorithm SHA256
@@ -31,7 +25,7 @@ steps:
       exit 1
     }
     & tar xf msys2.tar.xz
-    Start-NativeCommand { & msys64\usr\bin\bash.exe -lc exit }
+    exec { & msys64\usr\bin\bash.exe -lc exit }
     & msys64\usr\bin\bash.exe -lc 'pacman -Syuu --noconfirm'
     & msys64\usr\bin\bash.exe -lc 'pacman -Suu --noconfirm'
   displayName: 'Download and initialize MSYS2'
