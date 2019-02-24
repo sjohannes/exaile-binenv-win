@@ -10,26 +10,24 @@ pool:
 
 steps:
 - powershell: |
-    Write-Error test
     function exec ([scriptblock] $block) {
+      Write-Host ('> Running ' + "$block".Trim()) -ForegroundColor Blue
       $eap = $Script:ErrorActionPreference
       $Script:ErrorActionPreference = 'Continue'
       & $block 2>&1 | % { "$_" }
       if ($LASTEXITCODE -ne 0) {
-        throw "Exited with code ${LASTEXITCODE}: {$block}"
+        throw "Exited with code $LASTEXITCODE"
       }
       $Script:ErrorActionPreference = $eap
     }
+    Write-Host '> Downloading $env:URL'
     (New-Object System.Net.WebClient).DownloadFile($env:URL, (Join-Path (Get-Location) msys2.tar.xz))
     $hash = Get-FileHash msys2.tar.xz -Algorithm SHA256
     if ($hash.Hash -ine $env:SHA256) {
-      Write-Error "Hash mismatch"
-      & file msys2.tar.xz
-      Write-Output $hash
-      exit 1
+      throw "Hash mismatch for $(file msys2.tar.xz)"
     }
-    exec { & tar xf msys2.tar.xz }
-    exec { & msys64\usr\bin\bash.exe -lc exit }
-    exec { & msys64\usr\bin\bash.exe -lc 'pacman -Syuu --noconfirm' }
-    exec { & msys64\usr\bin\bash.exe -lc 'pacman -Suu --noconfirm' }
+    exec { tar xf msys2.tar.xz }
+    exec { msys64\usr\bin\bash.exe -lc exit }
+    exec { msys64\usr\bin\bash.exe -lc 'pacman -Syuu --noconfirm' }
+    exec { msys64\usr\bin\bash.exe -lc 'pacman -Suu --noconfirm' }
   displayName: 'Download and initialize MSYS2'
