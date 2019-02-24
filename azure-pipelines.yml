@@ -36,9 +36,11 @@ steps:
     cmd //c 'msys64\usr\bin\bash.exe' -lc 'pacman -Syuu --noconfirm'
     mkdir -p build/home
     mkdir -p build/tmp
+    mkdir -p build/var/cache/pacman/pkg
     mkdir -p build/var/lib/pacman
     mkdir -p build/var/log
-    cmd //c 'msys64\usr\bin\bash.exe' -lc "pacman --root build --noconfirm -Su"
+    mv msys64/var/cache/pacman/pkg/* build/var/cache/pacman/pkg
+    cmd //c 'msys64\usr\bin\bash.exe' -lc "pacman --root build --noconfirm -Syu"
     cmd //c 'msys64\usr\bin\bash.exe' -lc "pacman --root build --noconfirm -S base $PACKAGES"
     time tar cf exaile-binenv-win.tar.xz --strip-components=1 build
     du -csh exaile-binenv-win.tar.xz
