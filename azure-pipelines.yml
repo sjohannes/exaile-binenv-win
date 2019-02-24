@@ -1,6 +1,6 @@
 variables:
-  url: https://downloads.sourceforge.net/project/msys2/Base/x86_64/msys2-base-x86_64-20180531.tar.xz
-  sha256: 4e799b5c3efcf9efcb84923656b7bcff16f75a666911abd6620ea8e5e1e9870c
+  URL: https://downloads.sourceforge.net/project/msys2/Base/x86_64/msys2-base-x86_64-20180531.tar.xz
+  SHA256: 4e799b5c3efcf9efcb84923656b7bcff16f75a666911abd6620ea8e5e1e9870c
 
 trigger:
 - master
@@ -9,11 +9,14 @@ pool:
   vmImage: 'windows-2019'
 
 steps:
-- bash: |
-    curl -Lf -Ss -C - -o msys2.tar.xz $(url) || exit 1
-    echo $(sha256) msys2.tar.xz | sha256sum -c || exit 2
-    tar xf msys2.tar.xz || exit 3
-    msys64/usr/bin/bash.exe -lc exit || exit 3
-    msys64/usr/bin/bash.exe -lc "pacman -Syuu --noconfirm" || exit 3
-    msys64/usr/bin/bash.exe -lc "pacman -Suu --noconfirm" || exit 3
+- powershell: |
+    Invoke-WebRequest $URL -OutFile msys2.tar.xz
+    if ((Get-FileHash msys2.tar.xz SHA256) -ine $SHA256) {
+      Write-Error "Hash mismatch"
+      exit 1
+    }
+    tar xf msys2.tar.xz
+    msys64\usr\bin\bash.exe -lc exit
+    msys64\usr\bin\bash.exe -lc 'pacman -Syuu --noconfirm'
+    msys64\usr\bin\bash.exe -lc 'pacman -Suu --noconfirm'
   displayName: 'Download and initialize MSYS2'
