@@ -14,12 +14,12 @@ steps:
     $hash = Get-FileHash msys2.tar.xz -Algorithm SHA256
     if ($hash.Hash -ine $env:SHA256) {
       Write-Error "Hash mismatch"
-      file msys2.tar.xz
+      & file msys2.tar.xz
       Write-Output $hash
       exit 1
     }
-    tar xf msys2.tar.xz
-    msys64\usr\bin\bash.exe -lc exit
-    msys64\usr\bin\bash.exe -lc 'pacman -Syuu --noconfirm'
-    msys64\usr\bin\bash.exe -lc 'pacman -Suu --noconfirm'
+    & tar xf msys2.tar.xz
+    & msys64\usr\bin\bash.exe -lc exit 2>&1
+    & msys64\usr\bin\bash.exe -lc 'pacman -Syuu --noconfirm'
+    & msys64\usr\bin\bash.exe -lc 'pacman -Suu --noconfirm'
   displayName: 'Download and initialize MSYS2'
