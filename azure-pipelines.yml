@@ -19,7 +19,9 @@ steps:
       exit 1
     }
     & tar xf msys2.tar.xz
-    & msys64\usr\bin\bash.exe -lc exit 2>&1 | { "$_" }  # PowerShell doesn't like things on stderr
+    # The swearing at the end of the next command makes PowerShell not die when things are printed to stderr.
+    # See https://stackoverflow.com/a/12866669
+    & msys64\usr\bin\bash.exe -lc exit 2>&1|%{"$_"}
     & msys64\usr\bin\bash.exe -lc 'pacman -Syuu --noconfirm'
     & msys64\usr\bin\bash.exe -lc 'pacman -Suu --noconfirm'
   displayName: 'Download and initialize MSYS2'
