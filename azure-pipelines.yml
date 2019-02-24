@@ -10,12 +10,12 @@ pool:
 
 steps:
 - powershell: |
-    Invoke-WebRequest $env:URL -OutFile msys2.tar.xz
+    (New-Object System.Net.WebClient).DownloadFile($env:URL, (Join-Path (Get-Location) msys2.tar.xz))
     $hash = Get-FileHash msys2.tar.xz -Algorithm SHA256
-    echo $hash
-    echo $env:SHA256
-    if ($hash -ine $env:SHA256) {
+    if ($hash.Hash -ine $env:SHA256) {
       Write-Error "Hash mismatch"
+      file msys2.tar.xz
+      Write-Output $hash
       exit 1
     }
     tar xf msys2.tar.xz
