@@ -52,6 +52,6 @@ steps:
     # pacman doesn't work on /c/..., so the build dir must be inside msys root
     mkdir -p msys64/build/var/lib/pacman
     cmd //c 'msys64\usr\bin\bash.exe' -lc "pacman --noconfirm -r /build -Sy $PACKAGES"
-    (cd msys64/build && time tar -caf exaile-binenv-win.tar.xz -X <(echo "$EXCLUDE") *)
+    (cd msys64/build && time tar -caf ../../exaile-binenv-win.tar.xz -X <(echo "$EXCLUDE") *)
     du -csh exaile-binenv-win.tar.xz
   displayName: Create Exaile binenv
