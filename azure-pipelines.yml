@@ -19,6 +19,20 @@ variables:
     mingw-w64-i686-python2-pip
     mingw-w64-i686-librsvg
     tar
+  exclude: |
+    '*.a'
+    '*.pyc'
+    '*.pyo'
+    mingw32/include
+    mingw32/share/doc
+    mingw32/share/gtk-doc
+    mingw32/share/man
+    mingw32/share/OpenCV
+    mingw32/share/opencv4
+    usr/share/doc
+    usr/share/locale
+    usr/share/man
+    usr/share/vim
 
 trigger:
 - master
@@ -31,13 +45,13 @@ steps:
     set -ex
     curl -Lf -Ss -C - -o msys2.tar.xz $URL
     echo $SHA256 msys2.tar.xz | sha256sum -c
-    tar xf msys2.tar.xz
-    # Calling bash directly doesn't work for some reason, so go through cmd
+    tar -xf msys2.tar.xz
+    # Calling bash directly doesn't work (clash between cygwin dlls), so go through cmd
     cmd //c 'msys64\usr\bin\bash.exe' -lc exit  # Perform initial setup
     cmd //c 'msys64\usr\bin\bash.exe' -lc 'pacman --noconfirm -Syuu'  # Ensure up-to-date pacman etc.
     # pacman doesn't work on /c/..., so the build dir must be inside msys root
     mkdir -p msys64/build/var/lib/pacman
     cmd //c 'msys64\usr\bin\bash.exe' -lc "pacman --noconfirm -r /build -Sy $PACKAGES"
-    time tar cf exaile-binenv-win.tar.xz --strip-components=2 msys64/build
+    (cd msys64/build && time tar -caf exaile-binenv-win.tar.xz -X <(echo "$EXCLUDE") *)
     du -csh exaile-binenv-win.tar.xz
   displayName: Create Exaile binenv
